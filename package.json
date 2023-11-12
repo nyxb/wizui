@@ -1,21 +1,74 @@
 {
   "name": "wizui",
-  "private": true,
+  "type": "module",
   "version": "0.0.0",
+  "private": true,
+  "packageManager": "bun@1.0.11",
   "repository": {
-    "url": "https://github.com/tamagui/tamagui"
+    "url": "https://github.com/wizui/wizui"
   },
   "workspaces": [
     "./apps/*",
     "./packages/*"
   ],
-  "module": "index.ts",
-  "type": "module",
-  "devDependencies": {
-    "bun-types": "latest",
-    "@nyxb/eslint-config": "1.0.0-beta.15"
+  "scripts": {
+    "build:force": "bun clean:build && bun build --force",
+    "build:js": "./scripts/build-js.sh",
+    "build:types": "SKIP_JS=1 bun build",
+    "build": "turbo run build --filter=!next-app -vvv",
+    "check-deps": "check-dependency-version-consistency .",
+    "check": "manypkg check",
+    "clean:build": "turbo run clean:build",
+    "clean:ts": "tsc -b --clean tsconfig.build.json",
+    "clean": "turbo run clean:build",
+    "docs-bump-version": "node -r esbuild-register ./scripts/docs-bump-version.ts",
+    "fix": "bun manypkg fix",
+    "format": "node -r esbuild-register ./scripts/format.ts",
+    "git-crypt-unlock": "./scripts/git-crypt-unlock.sh",
+    "kitchen-sink:build:android": "bun workspace @wizui/kitchen-sink android",
+    "kitchen-sink:build:ios": "bun workspace @wizui/kitchen-sink ios",
+    "kitchen-sink:android": "bun workspace @wizui/kitchen-sink start:android",
+    "kitchen-sink:clean": "bun workspace @wizui/kitchen-sink start:clean",
+    "kitchen-sink:extract": "bun workspace @wizui/kitchen-sink start:extract",
+    "kitchen-sink:web": "bun workspace @wizui/kitchen-sink web",
+    "kitchen-sink": "bun workspace @wizui/kitchen-sink start",
+    "kitchen-sink:prod": "bun workspace @wizui/kitchen-sink start:prod",
+    "lighthouse:live": "npx lighthouse https://wizui.dev --view --chrome-flags='--headless' --throttling.cpuSlowdownMultiplier=16 --output-path=/tmp/report.html",
+    "lighthouse:prod": "npx lighthouse http://localhost:3333 --view --chrome-flags='--headless' --throttling.cpuSlowdownMultiplier=16 --output-path=/tmp/report.html",
+    "lighthouse:vite:prod": "npx lighthouse http://localhost:8080 --view --chrome-flags='--headless' --throttling.cpuSlowdownMultiplier=16 --output-path=/tmp/report.html",
+    "lighthouse": "npx lighthouse http://localhost:3000 --view --chrome-flags='--headless' --throttling.cpuSlowdownMultiplier=16 --output-path=/tmp/report.html",
+    "lint:fix": "ultra -r --no-pretty lint:fix",
+    "lint": "ultra -r --no-pretty lint",
+    "postinstall": "manypkg check && bun git-crypt-unlock",
+    "pretty": "pretty-quick",
+    "release:canary": "bun release --canary --ci",
+    "release": "node -r esbuild-register ./scripts/release.ts",
+    "sandbox:extract": "bun workspace @wizui/kitchen-sink dev:web:extract",
+    "sandbox:no-extract": "bun workspace @wizui/kitchen-sink dev:web",
+    "sandbox:prod": "bun workspace @wizui/kitchen-sink dev:web:prod",
+    "sandbox": "bun workspace @wizui/kitchen-sink dev:web:extract",
+    "setup": "node -r esbuild-register ./scripts/setup.ts",
+    "site:extract": "bun workspace @wizui/site dev:extract",
+    "site:prod:analyze": "ANALYZE=true bun site:prod",
+    "site:prod:no-extract": "bun workspace @wizui/site ci:build:no-extract && bun workspace @wizui/site next:start",
+    "site:prod:profile": "PROFILE=1 bun site:prod",
+    "site:prod": "bun workspace @wizui/site ci:build && bun workspace @wizui/site next:start",
+    "site": "cd apps/site && ./scripts/dev.sh",
+    "starter:native": "bun workspace @wizui/starter native",
+    "starter:prod": "bun workspace @wizui/starter web:prod && bun workspace @wizui/starter web:prod:serve",
+    "starter": "bun workspace @wizui/starter web",
+    "starters:sync": "node ./starters/sync"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@biomejs/biome": "^1.2.2",
+    "@manypkg/cli": "^0.19.1",
+    "@nyxb/eslint-config": "1.0.0-beta.15",
+    "@vercel/og": "^0.5.8",
+    "bun-types": "latest",
+    "typescript": "^5.2.2",
+    "ultra-runner": "^3.10.5"
   }
 }
